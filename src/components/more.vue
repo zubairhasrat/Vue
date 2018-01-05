@@ -58,8 +58,16 @@
                                 </div>
                                 <div class="columns">
                                     <div class="column is-4">
+                                        <h1 class="subtitle">Country:</h1>
+                                    </div>
+                                    <div class="column">
+                                        <span>Situated in {{touristPoint.metadata.country}}</span>
+                                        <p><i class="fa fa-map-marker" aria-hidden="true"></i> {{touristPoint.metadata.country}}</p>
+                                    </div>
+                                </div>
+                                <div class="columns">
+                                    <div class="column is-4">
                                         <h1 class="subtitle">Transportation:</h1>
-                                        
                                     </div>
                                     <div class="column">
                                         <span>Means of tranportation available in {{touristPoint.title}} like (self,local etc)</span>
@@ -88,7 +96,7 @@ export default {
 			showModel: false,
 		}   
 	},
-	 components: {
+	components: {
 		EditTouristPoints,
     },
     computed: {
@@ -120,13 +128,13 @@ export default {
   .pading-top{
       padding-top: 30px;
       padding-bottom: 30px; 
-  }
-.card{
-	padding: 10px;
-	margin: 20px;
-    width: 800px;
-}
-.edit-button {
+    }
+    .card{
+        padding: 10px;
+        margin: 20px;
+        width: 800px;
+    }
+    .edit-button {
       border: 1px solid transparent;;
       margin: 2px;
 			color:  rgb(84, 62, 145);
@@ -158,11 +166,11 @@ export default {
     }
     .fa-automobile{
         padding: 5px;
-		color: rgb(9, 255, 0);
+		color: rgb(170, 7, 7);
     }
     .fa-credit-card{
         padding: 5px;
-		color: aquamarine;
+		color: rgb(198, 231, 8);
     }
     .fa-sun-o{
         padding: 5px;

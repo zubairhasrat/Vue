@@ -81,6 +81,18 @@
                         </div>
                         <p class="help is-danger" v-if="errors.has('transportation')">{{ errors.first('transportation') }}</p>
                     </div>
+                      <div class="field" :class="{'has-error': errors.has('Country') }">
+                    <label class="label">Country</label>
+                    <div class="control">
+                        <input class="input" type="text"
+                        v-model="touristPoint.metadata.country" 
+                        v-validate="'required'" 
+                        data-vv-name="Country"
+                        placeholder="Enter the means of transport to get there"
+                        required>
+                    </div>
+                    <p class="help is-danger" v-if="errors.has('Country')">{{ errors.first('Country') }}</p>
+                </div>
                     <div class="file">
                         <img style="height: 25%; width: 25%;"  data-vv-name="image" :src="touristPoint.metadata.place_img1.url.replace(/ /g,'%20')" v-if="!!touristPoint.metadata.place_img1.url" />
                         <div class="control">

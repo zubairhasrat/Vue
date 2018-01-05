@@ -9,7 +9,6 @@
 </template>
 <script>
 export default {
-  
   data () {
     return {
      
@@ -17,13 +16,12 @@ export default {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
  .footer-style{
     background-color: rgb(255, 252, 252);
     color: rgb(253, 253, 255);
     background-color:  rgb(109, 123, 243);
+    position: relative;
     left: 0;
     bottom: 0;
     width: 100%;

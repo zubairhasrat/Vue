@@ -44,6 +44,15 @@ function generateTouristPlaceObject (payload) {
       parent: false
     },
     {
+      value: payload.metadata.country,
+      key: 'country',
+      title: 'country',
+      type: 'text',
+      children: false,
+      has_length_edit: true,
+      parent: false
+    },
+    {
       value: payload.metadata.transportation,
       key: 'transportation',
       title: 'transportation',

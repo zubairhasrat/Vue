@@ -19,6 +19,7 @@ const state = {
       suitable_seasons: null,
       expected_expence: null,
       transportation: null,
+      country: null,
       place_img1:{}
     }
   },
@@ -101,6 +102,7 @@ const mutations = {
         suitable_seasons: null,
         expected_expence: null,
         transportation: null,
+        country: null,
         place_img1:{
         
         }
@@ -195,6 +197,7 @@ const actions = {
             Request.addTouristPoints(payload).then(res =>{
               context.commit('SET_TOURIST_POINTS', res)
               context.commit('ADD_TOURISTPOINTS',res)
+              context.commit('SET_PLACE_NULL','')
               context.commit('TOURIST_PLACE_SUCCESS')
             })
             .catch(e => {

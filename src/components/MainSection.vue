@@ -1,10 +1,20 @@
 <template>
-  <div>
+	<div>
 		<section class="container pading-top">
+			<div class="panel">
+				<div class="panel-block">
+					<p class="control has-icons-left">
+						<input class="input is-medium style" type="text" v-model="search" placeholder="search place">
+						<span class="icon is-small is-left">
+							<i class="fa fa-search"></i>
+						</span>
+					</p>
+				</div>
+			</div>
 				<div v-if="status.loading" class="has-text-centered">
 				<img src="../assets/loder2.gif" alt="Loading">
 			</div>
-				<div class="columns"  v-for="places in chunkedPlaces" :key="places.id">
+				<div class="columns"  v-for="places in filteredPlaces" :key="places.id">
 					<div class="column is-4" v-for="item in places" :key="item._id">
 						<EditTouristPoints v-if="showEditModel" @close="showEditModel = false" :item='item'></EditTouristPoints>
 						<DetailAboutPlace v-if="showModel" @close="showModel = false" :item='item'></DetailAboutPlace>
@@ -65,8 +75,13 @@
 							</div>
 					</div>
 				</div>
+				<div v-if="totalPages() > 0" class="has-text-centered custom">
+					<span v-if="showPreviousLink()" class="pagination-btn" v-on:click="updatePage(currentPage - 1)"> <i class="fa fa-arrow-circle-left" aria-hidden="true"></i> </span>
+					{{ currentPage + 1 }} of {{ totalPages() }}
+					<span v-if="showNextLink()" class="pagination-btn" v-on:click="updatePage(currentPage + 1)"> <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> </span>
+				</div>
 		</section>
-  </div>
+	</div>
 </template>
 <script>
 import EditTouristPoints from '../components/EditTouristPoints.vue'
@@ -76,28 +91,45 @@ export default {
 	data(){
 		return{
 			showModel: false,
-			showEditModel : false
+			showEditModel : false,
+			search : '',
+			currentPage: 0,
+			pageSize: 3,
+			visiblePlaces: []
 		}   
 	},
-	 components: {
+	components: {
 		EditTouristPoints,
 		DetailAboutPlace
-  },
-  computed: {
-		 ...mapGetters([
-			'touristPoint',
-			'status',
-			'isPresent'
-    ]),
-    getTouristPlaces() {
-      return this.$store.getters.getTouristPlaces;
+  	},
+	computed: {
+		...mapGetters([
+		'touristPoint',
+		'status',
+		'isPresent'
+		]),
+    	getTouristPlaces() {
+      		return this.$store.getters.getTouristPlaces;
 		},
-		chunkedPlaces() {
-			return _.chunk(this.getTouristPlaces, 3)
+		visiblePlace(){
+			return this.visiblePlaces
+		},
+		filteredPlaces(){
+			var array = this.getTouristPlaces.filter((place) => {
+				return (place.metadata.country.match(this.search)) || (place.metadata.place_description.match(this.search))
+			})
+			array = array.slice(this.currentPage * this.pageSize, (this.currentPage * this.pageSize) + this.pageSize);
+			if (this.getTouristPlaces.length == 0 && this.currentPage > 0) {
+				this.updatePage(this.currentPage -1);
+			}
+			return _.chunk(array,3)
 		}
-  },
+  	},
 		created() {
 			this.$store.dispatch('getTouristPlaces');
+		},
+		beforeMount: function() {
+			this.updateVisiblePlaces()
 		},
 	methods: {
 		editPlace(place){
@@ -108,6 +140,19 @@ export default {
 		},
 		deletePlace(id){
 			this.$store.dispatch('deletePlace',id);
+		},
+		updatePage(pageNumber) {
+			this.currentPage = pageNumber;
+			this.updateVisiblePlaces();
+		},
+		totalPages() {
+			return Math.ceil(this.getTouristPlaces.length / this.pageSize);
+		},
+		showPreviousLink() {
+			return this.currentPage == 0 ? false : true;
+		},
+		showNextLink() {
+			return this.currentPage == (this.totalPages() - 1) ? false : true;
 		}
 	}
 }
@@ -182,5 +227,34 @@ export default {
 		border: 0px white;
 		margin-right: 0%;
 		margin-left: 30px;
+	}
+	.pagination-btn {
+		cursor: pointer;
+	}
+	.fa-arrow-circle-left, .fa-arrow-circle-right{
+		color:rgb(109, 123, 243);
+		font-size: 30px;
+		padding: 10px;
+	}
+	.custom{
+		padding: 10 5 5 px;
+		color: rgb(109, 123, 243);;
+		font-size: 20px;
+		 text-shadow: 1px 1px #1a0b0b;
+		font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+	}
+	.style{
+		border-radius: 20px;
+	}
+	.panel-block{
+		border-radius: 20px;
+		padding: 0%;
+	}
+	.panel-block:hover{
+		background-color: #ecf3f9;
+		-webkit-box-shadow: 0px 0px 15px 5px rgba(0, 185, 233, .75);
+		box-shadow: 0px 0px 15px 5px rgba(0, 185, 233, .75);
+		-webkit-transition: all 0.7s ease;
+		transition: all 0.7s ease;
 	}
 </style>
