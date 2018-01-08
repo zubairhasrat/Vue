@@ -190,15 +190,15 @@ const actions = {
       context.commit('ERROR', 'Something went wrong.')
     })
   },
-    addTouristPlaces (context, payload) {
+  addTouristPlaces (context, payload) {
       context.commit('TOURIST_PLACE_LOADING')
       if (isValueUnique(context.getters.getTouristPlaces, payload,'slug')) {
           Request.saveMedia(payload).then(res =>{
             Request.addTouristPoints(payload).then(res =>{
               context.commit('SET_TOURIST_POINTS', res)
               context.commit('ADD_TOURISTPOINTS',res)
-              context.commit('SET_PLACE_NULL','')
               context.commit('TOURIST_PLACE_SUCCESS')
+              context.commit('SET_PLACE_NULL','')
             })
             .catch(e => {
               context.commit('TOURIST_PLACE_ERROR', 'Something went wrong.')
@@ -208,16 +208,20 @@ const actions = {
         context.commit('TOURIST_PLACE_ERROR', 'Something went wrong.')
       })
       }else {
-        context.commit('SET_PLACE_NULL','')
         context.commit('TOURIST_PLACE_ERROR', 'Place Already Present!')
+        context.commit('SET_PLACE_NULL','')
       }
      
   },
   deletePlace(context,payload){
-    Request.deleteMedia(payload.metadata.place_img1.id).then(res =>{
-      console.log(res)
+    context.commit('LOADING')
+    Request.deleteMedia(payload.metadata.place_img1.id).then(res => {
       Request.deleteTouristPoint(payload).then(res =>{
         context.commit('DELETE_TOURIST_POINT',payload)
+        context.commit('SUCCESS')
+      })
+      .catch(e => {
+        context.commit('TOURIST_PLACE_ERROR', 'Something went wrong.')
       })
     })
   },
@@ -226,6 +230,12 @@ const actions = {
         Request.editTouristPlace(payload).then( res=>{
             context.commit('EDIT_TOURIST_POINTS',res)
         })
+        .catch(e => {
+          context.commit('TOURIST_PLACE_ERROR', 'Something went wrong.')
+        })
+    })
+    .catch(e => {
+      context.commit('TOURIST_PLACE_ERROR', 'Something went wrong.')
     })
   },
   setTouristPlaces (context, payload) {
@@ -243,7 +253,6 @@ const actions = {
   setPlaceNull(context){
     context.commit('SET_PLACE_NULL')
   }
-  
 }
 const store = () => {
   return new Vuex.Store({

@@ -65,7 +65,12 @@
 											</a>
 										</p>
 										<p class="card-footer-item">
-											<a class="button delete-button" @click="deletePlace(item)">
+											<a v-if="status.success" class="button delete-button" @click="deletePlace(item)">
+												<span class="icon is-small is-danger">
+													<i class="fa fa-trash fa-2x"></i>
+												</span>
+											</a>
+											<a v-else class="button is-loading delete-button" @click="deletePlace(item)">
 												<span class="icon is-small is-danger">
 													<i class="fa fa-trash fa-2x"></i>
 												</span>
@@ -94,8 +99,8 @@ export default {
 			showEditModel : false,
 			search : '',
 			currentPage: 0,
-			pageSize: 3,
-			visiblePlaces: []
+			pageSize: 6,
+			arrayLength : 0,
 		}   
 	},
 	components: {
@@ -118,18 +123,17 @@ export default {
 			var array = this.getTouristPlaces.filter((place) => {
 				return (place.metadata.country.match(this.search)) || (place.metadata.place_description.match(this.search))
 			})
+			this.arrayLength = array.length;
 			array = array.slice(this.currentPage * this.pageSize, (this.currentPage * this.pageSize) + this.pageSize);
 			if (this.getTouristPlaces.length == 0 && this.currentPage > 0) {
 				this.updatePage(this.currentPage -1);
 			}
+			
 			return _.chunk(array,3)
 		}
   	},
 		created() {
 			this.$store.dispatch('getTouristPlaces');
-		},
-		beforeMount: function() {
-			this.updateVisiblePlaces()
 		},
 	methods: {
 		editPlace(place){
@@ -143,10 +147,9 @@ export default {
 		},
 		updatePage(pageNumber) {
 			this.currentPage = pageNumber;
-			this.updateVisiblePlaces();
 		},
 		totalPages() {
-			return Math.ceil(this.getTouristPlaces.length / this.pageSize);
+			return Math.ceil(this.arrayLength / this.pageSize);
 		},
 		showPreviousLink() {
 			return this.currentPage == 0 ? false : true;

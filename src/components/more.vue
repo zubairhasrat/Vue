@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="modal is-active" @click="$emit('close'),resetplaces()">
-        <div class="modal-background"></div>
+    <div class="modal is-active" @keyup="escapeKeyListener($event)">
+        <div class="modal-background" @click="$emit('close'),resetplaces()" ></div>
         <div class="modal-content">
             <div class="box">
                 <div class="card">
@@ -80,7 +80,7 @@
                 </div>
             </div>
         </div>
-        <button class="modal-close is-large" aria-label="close" @click="$emit('close'),resetplaces()"></button>
+        <button class="modal-close is-large" aria-label="close" @click="$emit('close'),resetplaces()" @keyup.esc="$emit('close')"></button>
     </div>
 	<section class="container-fluid pading-top">
 	</section>
@@ -106,20 +106,22 @@ export default {
     ]),
     getTouristPlaces() {
         return this.$store.getters.getTouristPlaces;
-    },
-	chunkedPlaces() {
-        return _.chunk(this.getTouristPlaces, 3)
-        }
+        },
     },
     mounted() {
-		this.$store.dispatch('getTouristPlaces');
+        this.$store.dispatch('getTouristPlaces');
 	},
     methods :{
         resetplaces(){
             this.$store.dispatch('setPlaceNull');
-        }
-    }
+        },
+    },
 }
+$(document).keydown(function(event) { 
+    if (event.keyCode == 27) { 
+      //S $emit('close')
+    }
+});
 </script>
 <style scoped>
    .modal-content{

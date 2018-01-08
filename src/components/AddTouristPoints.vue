@@ -36,7 +36,7 @@
                 <div class="field" :class="{'has-error': errors.has('place_height') }">
                     <label class="label">Height from sea level</label>
                     <div class="control">
-                        <input class="input" type="text"
+                        <input class="input" type="number"
                         v-model="touristPoint.metadata.place_height"
                         v-validate="'required|numeric'" 
                         data-vv-name="place_height"
@@ -60,7 +60,7 @@
                 <div class="field" :class="{'has-error': errors.has('expected_expence') }">
                     <label class="label">Avarage expence </label>
                     <div class="control">
-                        <input class="input" type="text"
+                        <input class="input" type="number"
                         v-model="touristPoint.metadata.expected_expence" 
                         v-validate="'required|numeric'" 
                         data-vv-name="expected_expence"
@@ -109,9 +109,12 @@
                 <div class="field">
                     <div class="control">
                         <button v-if="!status.loading" class="button is-info is-medium model-save" @click="savePlace(touristPoint)">Save Place</button>
-                        <button v-else class="button is-info is-medium model-save" @click="savePlace(touristPoint)">Save Place</button>
+                        <button v-else class="button is-loading is-info is-medium model-save" @click="savePlace(touristPoint)">Save Place</button>
                     </div>
                 </div> 
+                <div v-show="touristPointStatus.error" class="field is-danger" >
+                    {{ touristPointStatus.error }}
+                </div>
             </div>
         </div>
         <button class="modal-close is-large" aria-label="close" @click="$emit('close'),resetplaces()"></button>
@@ -155,10 +158,11 @@ export default {
                 slug = slug.replace(/\s+/g, '-').toLowerCase();
                 touristPoint.slug = slug
                 this.$store.dispatch('addTouristPlaces', touristPoint)
-                this.$emit('close')
+                if(!this.touristPointStatus.error){
+                    this.$emit('close')
+                }
             }
         })
-        
     },
     resetplaces(){
         this.$store.dispatch('setPlaceNull');
@@ -179,5 +183,5 @@ export default {
   img{
       width :10px;
       height: 10px;
-  }
+    }
 </style>
